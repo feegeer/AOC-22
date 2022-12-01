@@ -1,0 +1,4 @@
+puzzle-input/
+venv/
+.vscode/
+.mypy_cache
