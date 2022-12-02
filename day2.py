@@ -1,6 +1,6 @@
 import enum
 import pathlib
-
+from typing import List
 
 # A | X -> Rock: 1 Pt.
 # B | Y -> Paper: 2 Pts.
@@ -21,15 +21,31 @@ class MatchResult(enum.Enum):
   BZ = 9
   CZ = 6
 
-def CalculatePoints(input: pathlib.Path)-> int:
-  matches = input.read_text().split("\n")[:-1]
-  points = 0
+class DesiredResult(enum.Enum):
+  X = 0
+  Y = 1
+  Z = 2
+
+class Moves(enum.Enum):
+  A = sorted([MatchResult.AX.value, MatchResult.AY.value, MatchResult.AZ.value])
+  B = sorted([MatchResult.BX.value, MatchResult.BY.value, MatchResult.BZ.value])
+  C = sorted([MatchResult.CX.value, MatchResult.CY.value, MatchResult.CZ.value])
+
+def CalculateScore(matches: List[str])-> int:
+  score = 0
   for match in matches:
-    points += MatchResult[match.replace(" ", "")].value
-  return points
+    score += MatchResult[match.replace(" ", "")].value
+  return score
 
-
+def GetScoreWithInstructions(matches: List[str])-> int:
+  score = 0
+  for match in matches:
+    score += Moves[match[0]].value[DesiredResult[match[2]].value]
+  return score
 
 if __name__ == "__main__":
-  points = CalculatePoints(pathlib.Path("puzzle-input\input_day2.txt"))
-  print(f"{points=}")
+  matches = pathlib.Path("puzzle-input\input_day2.txt").read_text().split("\n")[:-1]
+  score1 = CalculateScore(matches)
+  score2 = GetScoreWithInstructions(matches)
+  print(f"{score1=}")
+  print(f"{score2=}")
